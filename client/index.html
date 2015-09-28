@@ -1,0 +1,247 @@
+<!DOCTYPE html >
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="UTF-8">
+	<title>mini Store</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+	<script>
+	 	var myModule = angular.module('myApp', ["ngRoute"]);
+	 	myModule.config(function($routeProvider)
+	 	{
+	 		$routeProvider
+	 		.when('/', {
+	 			templateUrl: 'partials/Dashboard.html'
+	 		})
+	 		.when('/Products', {
+	 			templateUrl: 'partials/Products.html'
+	 		})
+	 		.when('/Orders',{
+	 			templateUrl: 'partials/Orders.html'
+	 		})
+	 		.when('/Customers', {
+	 			templateUrl: 'partials/Customers.html'
+	 		})
+	 		.otherwise({
+	 			redirectTo: '/'
+	 		});
+	 	});
+
+	 	//factories
+	 	myModule.factory('customersFactory', function($http)
+	 	{
+	 		var factory = {};
+	 		factory.getCustomers = function(callback)
+	 		{
+	 			$http.get('/getCustomers').success(function(result)
+	 			{	
+	 				console.log(result);
+	 				callback(result);
+	 			});
+	 		}
+	 		factory.addCustomer = function(data, callback)
+	 		{
+	 			$http.post('/addCustomer', data).success(function(result){
+	 				
+	 				callback();
+	 			})
+	 		}
+
+	 		return factory;
+	 	});
+
+	 	//orders factory
+
+	 	myModule.factory('ordersFactory',  function($http){
+	 		var factory = {};
+	 		factory.getOrders = function(callback){
+	 			$http.get('/getOrders').success(function(result){
+	 				// console.log(result);
+	 				callback(result);
+	 			})
+	 		};
+	 		factory.getCustomers = function(callback){
+	 			$http.get('/getCustomers').success(function(result){
+	 				callback(result);
+	 			})
+	 		};
+	 		factory.getProducts = function(callback){
+	 			$http.get('/getProducts').success(function(result){
+	 				callback(result);
+	 			})
+	 		};
+	 		factory.addOrder = function(data, callback){
+	 			$http.post('/addOrder', data).success(function(result){
+	 				console.log(result);
+	 				callback();
+	 			})
+	 		}
+	 			
+	 		return factory;
+	 	});
+
+	 	// products factory
+
+	 	myModule.factory('productsFactory', function($http){
+	 		var factory = {};
+
+	 		factory.getProducts = function(callback)
+	 		{
+	 			$http.get('/getProducts').success(function(result){
+	 				console.log('coming here');
+	 				callback(result);
+	 			});
+	 		};
+	 		factory.addProduct = function(data, callback)
+	 		{
+	 			$http.post('/addProduct', data).success(function(result){
+	 				callback();
+	 			})
+	 		};
+	 		return factory;
+	 	});
+
+	 	// dashboardFactory
+	 	myModule.factory('dashboardFactory', function($http){
+	 		var factory = {};
+
+	 		factory.getProducts = function(callback){
+	 			$http.get('/getProducts').success(function(result){
+	 				callback(result);
+	 			})
+	 		};
+	 		factory.getOrders = function(callback){
+	 			$http.get('/getOrders').success(function(result){
+	 				callback(result);
+	 			})
+	 		};
+	 		factory.getCustomers = function(callback)
+	 		{
+	 			$http.get('/getCustomers').success(function(result){
+	 				callback(result);
+	 			});
+	 		}
+	 		return factory;
+	 	})
+
+
+	 	// controllers
+	 	// customers controller
+	 	myModule.controller('customersController', function($scope, customersFactory)
+	 	{
+	 		$scope.customers = [];
+	 		customersFactory.getCustomers(function(data){
+	 			$scope.customers = data;
+	 		});
+	 		$scope.addCustomer = function()
+	 		{
+	 			if($scope.customers.length >0  )
+	 			{
+	 				for(var i=0; i<$scope.customers.length; i++)
+	 				{
+	 					if($scope.customers[i].name === $scope.newCustomer.name)
+	 					{
+	 						alert('Customer already exists');
+	 						break;
+		 				}
+		 				else
+		 				{
+		 					customersFactory.addCustomer($scope.newCustomer, function()
+		 					{
+		 						customersFactory.getCustomers(function(data)
+		 						{
+		 							$scope.customers = data;
+		 						});	
+		 					});
+		 					break;
+		 				}
+	 				}
+	 			}
+	 			else
+	 			{
+	 				customersFactory.addCustomer($scope.newCustomer, function()
+ 					{
+ 						customersFactory.getCustomers(function(data)
+ 						{
+ 							$scope.customers = data;
+ 						});	
+ 					});
+	 			}	
+	 		}
+	 	});
+
+	 	//orders controller
+
+	 	myModule.controller('ordersController', function($scope, ordersFactory){
+	 		$scope.orders = [];
+	 		$scope.customers = [];
+	 		$scope.products = [];
+	 		ordersFactory.getOrders(function(data){
+	 			$scope.orders = data;
+	 		});
+	 		ordersFactory.getCustomers(function(data){
+	 			$scope.customers = data;
+	 		});
+	 		ordersFactory.getProducts(function(data){
+	 			$scope.products = data;
+	 		});
+	 		$scope.addOrder = function(){
+	 			ordersFactory.addOrder($scope.newProduct, function(){
+	 				console.log($scope.newProduct);
+	 				ordersFactory.getOrders(function(data){
+	 					console.log(data);
+	 					$scope.orders = data;
+	 				});
+	 			})	
+	 		};
+	 	});
+
+	 	//products controller
+	 	myModule.controller('productsController', function($scope, productsFactory){
+	 		$scope.products = [];
+	 		productsFactory.getProducts(function(data){
+	 			$scope.products = data;
+	 		})
+	 		$scope.addProduct = function(){
+	 					productsFactory.addProduct($scope.newProduct, function(){
+		 				productsFactory.getProducts(function(data){
+			 			$scope.products = data;
+			 		})
+	 			})
+	 		}
+	 	});
+
+	 	//dashboard controller
+	 	myModule.controller('dashboardController', function($scope, dashboardFactory){
+	 		$scope.products = [];
+	 		$scope.orders = [];
+	 		$scope.customers = [];
+	 		dashboardFactory.getProducts(function(data)
+	 		{
+	 			$scope.products = data;
+	 		});
+	 		dashboardFactory.getOrders(function(data)
+	 		{
+	 			$scope.orders = data;
+	 		});
+	 		dashboardFactory.getCustomers(function(data){
+	 			$scope.customers = data;
+	 		})
+	 	})
+
+	</script>
+</head>
+<body>
+	<div class="container">
+		<div class="row" style='text-align: center'>
+			<h4><a href="#/">Dashboard</a> | <a href="#/Products">Products</a> | <a href="#/Orders">ORDERS</a> | <a href="#/Customers">CUSTOMERS</a></h4>
+			<hr>
+		</div>
+		<div ng-view='' class='container'>
+		
+		</div>
+	</div>
+	
+</body>
+</html>

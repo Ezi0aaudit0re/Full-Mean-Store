@@ -1,0 +1,12 @@
+<div class='row' ng-controller='customersController'>
+	<h4>Add a new customer</h4>
+	<form name='myForm'>
+		<input type="text" ng-model='newCustomer.name' name='newCustomer' style='padding: 5px' placeholder='New Name' required /><br>
+		<input type="submit" class='btn btn-info' ng-click='addCustomer()' style='margin-top: 5px'><br>	
+	</form>
+	<div class='alert alert-danger' ng-show='myForm.newCustomer.$error.required'  style='width: 200px'>Please enter a name</div>
+	<hr>
+	<ul>
+		<li ng-repeat='customer in customers'>{{customer.name}}</li>
+	</ul>
+</div>

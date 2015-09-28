@@ -1,0 +1,39 @@
+<div class='row' ng-controller='ordersController'>
+	<div class="col-md-6">
+		<h4>Add a new product</h4>
+		<label>Select a Customer</label>
+		<select ng-model='newProduct.customer_name'>
+			<option ng-repeat='customer in customers'>{{customer.name}}</option>
+		</select><br>
+		<label>Select a product</label>
+		<select ng-model='newProduct.product'>
+			<option ng-repeat='product in products'>{{product.name}}</option>
+		</select><br>
+		<label>Quantitu</label>
+		<select ng-model='newProduct.qty'>
+			<option value='1'>1</option>
+			<option value='2'>2</option>
+			<option value='3'>3</option>
+			<option value='4'>4</option>
+		</select><br>
+		<input type="submit" ng-click='addOrder()' class='btn btn-info'>
+	</div>
+	<table class="table table-hover" ng-if='orders.length > 0'>
+		<thead>
+			<tr>
+				<th>Customer Name</th>
+				<th>Product</th>
+				<th>Quantity</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class='warning' ng-repeat='order in orders'>
+				<td>{{order.name}}</td>
+				<td>{{order.product_name}}</td>
+				<td>{{order.qty}}</td>
+				<td>{{order.ordered_at}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

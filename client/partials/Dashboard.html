@@ -1,0 +1,36 @@
+<div ng-controller='dashboardController' style='overflow: auto' >
+	<div class="row" style='overflow: auto'>
+		<div class="col-xs-2 pull-left">
+			<input type="text" placeholder='Search Products' ng-model='filter_name'><br>
+			<hr style='border: 2px solid orange'>
+		</div>
+		<div class='col-xs-10 pull-right' >
+			<h3>Products</h3>
+			<div ng-repeat='product in products | limitTo: 3 | filter: filter_name' style="display: inline-block; margin: 10px; ">
+				<img src={{product.image}} alt="Image for the product" height='200px' width='200px' style="border: 1px solid orange">
+				<h4 style="text-align: center">{{product.name}}</h4>
+			</div>
+			<br>
+			<a href="#/Products" style='margin-top: 10px; margin-left: 300px'>Show All Products</a>
+			<hr style='border: 2px solid orange'>
+			<div>
+				<h3>Recent Orders</h3>
+				<ul>
+					<h4><li ng-repeat='order in orders | limitTo: 3'>{{order.name}}, {{order.product_name}}, {{order.qty}}</li></h4>
+				</ul>
+				<br>
+				<a href="#/Orders" style='margin-left: 310px; margin-top 30px;'>Show all orders</a>
+			</div>
+			
+			<hr style='border: 2px solid orange'>
+			<div>
+				<h3>New Customers</h3>
+				<ul>
+					<h4><li ng-repeat='customer in customers | limitTo: 3'>{{customer.name}}</li></h4>
+				</ul>
+				<a href="#/Customers" style='margin-left: 300px'>Show all customers</a>
+			</div>
+			<hr>
+		</div>
+	</div>
+</div>
